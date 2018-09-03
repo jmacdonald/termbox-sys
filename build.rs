@@ -7,6 +7,7 @@ fn main() {
     let dst = Path::new(&out_dir);
 
     setup();
+    patch();
     configure();
     build();
     install(&dst);
@@ -23,6 +24,20 @@ fn setup() {
     let manifest_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
     let cargo_dir = Path::new(&manifest_dir);
     cmd.current_dir(&cargo_dir);
+
+    run(&mut cmd);
+}
+
+fn patch() {
+    let mut cmd = Command::new("sed");
+    cmd.arg("-i");
+    cmd.arg("s/python/python2/g");
+    cmd.arg("waf");
+
+    let manifest_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
+    let cargo_dir = Path::new(&manifest_dir);
+    let termbox_dir = cargo_dir.join(".termbox");
+    cmd.current_dir(&termbox_dir);
 
     run(&mut cmd);
 }
